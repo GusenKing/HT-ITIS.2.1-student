@@ -15,22 +15,6 @@ public static class Parser
         operation = ParseOperation(args[1]);
         if (!Double.TryParse(args[2], out val2))
             throw new ArgumentException("Values must be double");
-
-        switch (args[1])
-        {
-            case "+":
-                operation = CalculatorOperation.Plus;
-                break;
-            case "-":
-                operation = CalculatorOperation.Minus;
-                break;
-            case "*":
-                operation = CalculatorOperation.Multiply;
-                break;
-            case "/":
-                operation = CalculatorOperation.Divide;
-                break;
-        }
     }
 
     private static bool IsArgLengthSupported(string[] args) => args.Length == 3;
