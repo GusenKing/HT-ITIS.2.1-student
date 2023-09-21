@@ -19,9 +19,8 @@
         ldc.i4.3
         beq Divide
         
-        ldarg.1
-        ldc.i4.4
-        beq Undefined
+        newobj instance void [System.Runtime]System.InvalidOperationException::.ctor()
+        throw
         
         Plus:
         ldarg.0
@@ -46,13 +45,7 @@
         ldarg.2
         div
         ret
-        
-        Undefined:
-        newobj instance void [System.Runtime]System.ArgumentOutOfRangeException::.ctor()
-        throw
-    }
-        
-        
+    }     
 }
 
 
