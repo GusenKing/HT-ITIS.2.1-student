@@ -8,25 +8,15 @@
     {
         ldarg.0
         call bool Hw2.Parser::IsArgLengthSupported(string[])
-        brtrue AfterBadLengthException
-
-        ldstr "Wrong amount of arguments"
-        newobj instance void [System.Runtime]System.ArgumentException::.ctor(string)
-        throw
+        brfalse BadLengthException
         
-        AfterBadLengthException:
         ldarg.0
         ldc.i4.0
         ldelem.ref
         ldarg.1
         call bool [System.Runtime]System.Double::TryParse(string, [out] float64&)
-        brtrue AfterBadValue1Exception
+        brfalse BadValue1Exception
         
-        ldstr "Value 1 must be double"
-        newobj instance void [System.Runtime]System.ArgumentException::.ctor(string)
-        throw
-       
-        AfterBadValue1Exception:
         ldarg.2
         ldarg.0
         ldc.i4.1
@@ -39,14 +29,23 @@
         ldelem.ref
         ldarg.3
         call bool [System.Runtime]System.Double::TryParse(string, [out] float64&)
-        brtrue AfterBadValue2Exception
+        brfalse BadValue2Exception
+        ret
         
-        ldstr "Value 2 must be double"
+        BadLengthException:
+        ldstr "Wrong amount of arguments"
         newobj instance void [System.Runtime]System.ArgumentException::.ctor(string)
         throw
         
-        AfterBadValue2Exception:
-        ret
+        BadValue1Exception:
+        ldstr "Value 1 must be double"
+        newobj instance void [System.Runtime]System.ArgumentException::.ctor(string)
+        throw
+        
+        BadValue2Exception:
+        ldstr "Value 2 must be double"
+        newobj instance void [System.Runtime]System.ArgumentException::.ctor(string)
+        throw
     }
 
     .method static private bool IsArgLengthSupported(string[]) cil managed
