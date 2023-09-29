@@ -20,8 +20,15 @@ public class SingleInitializationSingleton
 
     internal static void Reset()
     {
-        _instance = new Lazy<SingleInitializationSingleton>(() => new SingleInitializationSingleton());
-        _isInitialized = false;
+        if(!_isInitialized) return;
+
+        lock (Locker)
+        {
+            if (!_isInitialized) return;
+            
+            _instance = new Lazy<SingleInitializationSingleton>(() => new SingleInitializationSingleton());
+            _isInitialized = false;
+        }
     }
 
     public static void Initialize(int delay)
