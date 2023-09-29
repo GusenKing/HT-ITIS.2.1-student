@@ -4,7 +4,8 @@ public class SingleInitializationSingleton
 {
     public const int DefaultDelay = 3_000;
     private static readonly object Locker = new();
-    private static Lazy<SingleInitializationSingleton> _instance;
+    private static Lazy<SingleInitializationSingleton> _instance = 
+            new(() => new SingleInitializationSingleton());
     private static volatile bool _isInitialized = false;
 
     private SingleInitializationSingleton(int delay = DefaultDelay)
