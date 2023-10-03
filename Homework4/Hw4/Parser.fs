@@ -22,12 +22,12 @@ let parseOperation (arg : string) =
     |_ -> raise (ArgumentException("Wrong operation"))
         
 let parseCalcArguments(args : string[]) =
-    let mutable n1 = 0
-    let mutable n2 = 0
+    let mutable n1 = 0.0
+    let mutable n2 = 0.0
     if not (isArgLengthSupported args) then ArgumentException("Incorrect amount of arguments") |> raise
-    if not Double.TryParse args[0] n1 then ArgumentException("First argument must be a number") |> raise
+    if not (Double.TryParse (args[0], &n1)) then ArgumentException("First argument must be a number") |> raise
     let parsedOperation = parseOperation args[1]
-    if not (Double.TryParse(args[2] n2)) then ArgumentException("Third argument must be a number") |> raise
+    if not (Double.TryParse (args[2], &n2)) then ArgumentException("Third argument must be a number") |> raise
     
     let result = {
         arg1 = n1;
