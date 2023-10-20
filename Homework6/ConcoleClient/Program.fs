@@ -20,7 +20,8 @@ let convertInputToUrl (input: string) =
 let sendRequestAsync(client: HttpClient, url: string) =
     async {
         let! response = Async.AwaitTask(client.GetAsync url)
-        return response
+        let! result = Async.AwaitTask(response.Content.ReadAsStringAsync())
+        return result
     }
 
 [<EntryPoint>]
@@ -32,7 +33,7 @@ let main args =
         match urlResult with
         | Ok url ->
             let serverResult = Async.RunSynchronously(sendRequestAsync(client, url))
-            printfn $"Result from server: {serverResult.Content.ReadAsStringAsync().Result}"
+            printfn $"Result from server: {serverResult}"
         | Error err ->
             printfn $"{err}"
     0
