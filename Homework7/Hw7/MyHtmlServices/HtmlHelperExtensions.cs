@@ -1,10 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hw7.MyHtmlServices;
@@ -63,7 +60,7 @@ public static class HtmlHelperExtensions
 
     private static string FromCamelCaseToDisplayName(string propertyName)
     {
-        return Regex.Replace(propertyName, "([A-Z])", " $1", RegexOptions.Compiled).TrimEnd();
+        return Regex.Replace(propertyName, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
     }
 
     private static IHtmlContent CreateInputField(string name, string type, string? value)
