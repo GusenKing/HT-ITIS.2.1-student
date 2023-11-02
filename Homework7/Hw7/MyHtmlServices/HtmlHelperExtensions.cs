@@ -35,11 +35,7 @@ public static class HtmlHelperExtensions
         {
             return CreateInputField(property.Name, "number", model == null ? null : (property.GetValue(model) as int?).ToString());
         }
-        if (property.PropertyType.IsEnum)
-        {
-            return CreateDropdownFromEnum(property, model);
-        }
-        return new HtmlString("This property is not supported yet");
+        return CreateDropdownFromEnum(property, model);
     }
 
     private static IHtmlContent CreateLabel(PropertyInfo property)
