@@ -43,8 +43,8 @@ public static class HtmlHelperExtensions
         string? propertyDisplayName = null;
         foreach (var attribute in property.GetCustomAttributes())
         {
-            if (attribute is DisplayAttribute)
-                propertyDisplayName = (attribute as DisplayAttribute)?.Name;
+            if (attribute is DisplayAttribute displayAttribute)
+                propertyDisplayName = displayAttribute.Name;
         }
 
         if (propertyDisplayName == null)
