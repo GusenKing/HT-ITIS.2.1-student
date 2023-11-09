@@ -14,7 +14,7 @@ public static class HtmlHelperExtensions
         var model = helper.ViewData.Model;
         var resultingHtmlContent = new HtmlContentBuilder();
 
-        foreach (var modelProperty in modelType.GetProperties())
+        foreach (var modelProperty in modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
             resultingHtmlContent.AppendHtml("<div>");
             resultingHtmlContent.AppendHtml(CreateLabel(modelProperty));
@@ -25,18 +25,11 @@ public static class HtmlHelperExtensions
 
         return resultingHtmlContent;
     }
+    
     private static IHtmlContent CreateInputForProperty(PropertyInfo property, object? model)
-    {
-        if (property.PropertyType == typeof(string))
-        {
-            return CreateInputField(property.Name, "text", model == null ? null : property.GetValue(model) as string);
-        }
-        if (property.PropertyType == typeof(int))
-        {
-            return CreateInputField(property.Name, "number", model == null ? null : (property.GetValue(model) as int?).ToString());
-        }
-        return CreateDropdownFromEnum(property, model);
-    }
+        => property.PropertyType.IsEnum
+            ? CreateDropdownFromEnum(property, model)
+            : CreateInputField(property, model == null ? null : property.GetValue(model)?.ToString());
 
     private static IHtmlContent CreateLabel(PropertyInfo property)
     {
@@ -59,25 +52,29 @@ public static class HtmlHelperExtensions
         return Regex.Replace(propertyName, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
     }
 
-    private static IHtmlContent CreateInputField(string name, string type, string? value)
+    private static IHtmlContent CreateInputField(PropertyInfo property, string? value)
     {
-        return new HtmlString($"<input id=\"{name}\" type=\"{type}\" name=\"{name}\" value=\"{value}\"></input>");
+        var type = property.PropertyType == typeof(string) ? "text" : "number"; 
+        return new HtmlString($"<input id=\"{property.Name}\" type=\"{type}\" name=\"{property.Name}\" value=\"{value}\"></input>");
     }
 
     private static IHtmlContent CreateDropdownFromEnum(PropertyInfo property, object? model)
     {
         var hcb = new HtmlContentBuilder();
         hcb.AppendHtml($"<select id=\"{property.Name}\" name=\"{property.Name}\">");
+        
+        string? selectedName = null;
+        if (model != null)
+        {
+            var modelValue = property.GetValue(model);
+            selectedName = property.PropertyType.GetEnumName(modelValue!);
+        }
+
         foreach (var optionName in property.PropertyType.GetEnumNames()) 
         {
-            bool isSelected = false;
-            if (model != null)
-            {
-                var value = property.GetValue(model);
-                isSelected = property.PropertyType.GetEnumName(value!) == (string)optionName;
-            }
-            hcb.AppendHtml($"<option value=\"{optionName}\" {(isSelected ? "selected" : string.Empty)}>{optionName}</option>");
+            hcb.AppendHtml($"<option value=\"{optionName}\" {(selectedName == optionName ? "selected" : string.Empty)}>{optionName}</option>");
         }
+        
         hcb.AppendHtml("</select>");
         return hcb;
     }
@@ -85,15 +82,16 @@ public static class HtmlHelperExtensions
     private static IHtmlContent CreateValidationField(PropertyInfo property, object? model)
     {
         var hcb = new HtmlContentBuilder();
-
         hcb.AppendHtml($"<span id=\"{property.Name}\">");
+        
         if (model == null) 
             return hcb.AppendHtml("</span>");
+        
         var attributes = property.GetCustomAttributes<ValidationAttribute>();
         foreach (var validationAttribute in attributes)
         {
-            if (validationAttribute.IsValid(property.GetValue(model))) continue;
-            hcb.Append(validationAttribute.ErrorMessage);
+            if (!validationAttribute.IsValid(property.GetValue(model)))
+                hcb.Append(validationAttribute.ErrorMessage);
         }
 
         return hcb.AppendHtml("</span>");
