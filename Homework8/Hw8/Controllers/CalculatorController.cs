@@ -14,11 +14,11 @@ public class CalculatorController : Controller
         string operation,
         string val2)
     {
-        if (!Double.TryParse(val1, out double parsedVal1))
+        if (!double.TryParse(val1, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsedVal1))
             return new ObjectResult(Messages.InvalidNumberMessage);
         if (!Enum.TryParse(operation, out Operation parsedOperation))
             return new ObjectResult(Messages.InvalidOperationMessage);
-        if (!Double.TryParse(val2, out double parsedVal2))
+        if (!double.TryParse(val2, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsedVal2))
             return new ObjectResult(Messages.InvalidNumberMessage);
 
         return parsedOperation switch
