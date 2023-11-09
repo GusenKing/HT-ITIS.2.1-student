@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Hw8.Calculator;
@@ -8,37 +9,28 @@ namespace Hw8.Controllers;
 
 public class CalculatorController : Controller
 {
-    public ActionResult<double> Calculate([FromServices] ICalculator calculator,
+    public IActionResult Calculate([FromServices] ICalculator calculator,
         string val1,
         string operation,
         string val2)
     {
-        var parsedValues = ParserForCalculator.ParseParams(val1, operation, val2);
-        ActionResult<double> result;
-        switch (parsedValues.Item2)
-        {
-            case Operation.Plus:
-                result =  calculator.Plus(parsedValues.Item1, parsedValues.Item3);
-                break;
-            case Operation.Minus:
-                result =  calculator.Minus(parsedValues.Item1, parsedValues.Item3);
-                break;
-            case Operation.Multiply:
-                result =  calculator.Multiply(parsedValues.Item1, parsedValues.Item3);
-                break;
-            case Operation.Divide:
-            {
-                if (parsedValues.Item3 == 0.0)
-                    throw new ArgumentException(Messages.DivisionByZeroMessage);
-                result = calculator.Divide(parsedValues.Item1, parsedValues.Item3);
-                break;
-            }
-            default:
-                result = double.NaN;
-                break;
-        }
+        if (!Double.TryParse(val1, out double parsedVal1))
+            return new ObjectResult(Messages.InvalidNumberMessage);
+        if (!Enum.TryParse(operation, out Operation parsedOperation))
+            return new ObjectResult(Messages.InvalidOperationMessage);
+        if (!Double.TryParse(val2, out double parsedVal2))
+            return new ObjectResult(Messages.InvalidNumberMessage);
 
-        return result;
+        return parsedOperation switch
+        {
+            Operation.Plus => new ObjectResult(calculator.Plus(parsedVal1, parsedVal2)),
+            Operation.Minus => new ObjectResult(calculator.Minus(parsedVal1, parsedVal2)),
+            Operation.Multiply => new ObjectResult(calculator.Multiply(parsedVal1, parsedVal2)),
+            Operation.Divide => parsedVal2 == 0.0
+                ? new ObjectResult(Messages.DivisionByZeroMessage)
+                : new ObjectResult(calculator.Divide(parsedVal1, parsedVal2)),
+            _ => new ObjectResult(Messages.InvalidOperationMessage)
+        };
     }
     
     [ExcludeFromCodeCoverage]

@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Hw8.Calculator;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hw8;
 
@@ -11,7 +12,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllersWithViews();
-
+        builder.Services.AddSingleton<ICalculator, Calculator.Calculator>();
+        
         var app = builder.Build();
 
         if (!app.Environment.IsDevelopment())
@@ -19,7 +21,7 @@ public class Program
             app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
         }
-
+        
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 

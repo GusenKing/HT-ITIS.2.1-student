@@ -8,5 +8,7 @@ public class Calculator : ICalculator
 
     public double Multiply(double val1, double val2) => val1 * val2;
 
-    public double Divide(double firstValue, double secondValue) => firstValue / secondValue;
+    public double Divide(double firstValue, double secondValue) => secondValue == 0 
+        ? throw new InvalidOperationException(Messages.DivisionByZeroMessage) 
+        : firstValue / secondValue;
 }
