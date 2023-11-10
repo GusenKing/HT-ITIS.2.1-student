@@ -1,1 +1,1 @@
-**/Hw3.Mutex/WithMutex.cs,**/Homework7/**
+**/Hw3.Mutex/WithMutex.cs
