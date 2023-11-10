@@ -13,21 +13,21 @@ public class CalculatorController : Controller
         string val2)
     {
         if (!double.TryParse(val1, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsedVal1))
-            return new ObjectResult(Messages.InvalidNumberMessage);
+            return BadRequest(Messages.InvalidNumberMessage);
         if (!Enum.TryParse(operation, out Operation parsedOperation))
-            return new ObjectResult(Messages.InvalidOperationMessage);
+            return BadRequest(Messages.InvalidOperationMessage);
         if (!double.TryParse(val2, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsedVal2))
-            return new ObjectResult(Messages.InvalidNumberMessage);
+            return BadRequest(Messages.InvalidNumberMessage);
 
         return parsedOperation switch
         {
-            Operation.Plus => new ObjectResult(calculator.Plus(parsedVal1, parsedVal2)),
-            Operation.Minus => new ObjectResult(calculator.Minus(parsedVal1, parsedVal2)),
-            Operation.Multiply => new ObjectResult(calculator.Multiply(parsedVal1, parsedVal2)),
+            Operation.Plus => Ok(calculator.Plus(parsedVal1, parsedVal2)),
+            Operation.Minus => Ok(calculator.Minus(parsedVal1, parsedVal2)),
+            Operation.Multiply => Ok(calculator.Multiply(parsedVal1, parsedVal2)),
             Operation.Divide => parsedVal2 == 0.0
-                ? new ObjectResult(Messages.DivisionByZeroMessage)
-                : new ObjectResult(calculator.Divide(parsedVal1, parsedVal2)),
-            _ => new ObjectResult(Messages.InvalidOperationMessage)
+                ? BadRequest(Messages.DivisionByZeroMessage)
+                : Ok(calculator.Divide(parsedVal1, parsedVal2)),
+            _ => BadRequest(Messages.InvalidOperationMessage)
         };    }
     
     [ExcludeFromCodeCoverage]
