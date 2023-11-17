@@ -22,6 +22,7 @@ public class MathCalculatorService : IMathCalculatorService
 
             var result = Expression.Lambda<Func<double>>(
                 await MyExpressionVisitor.VisitExpression(expressionConverted)).Compile().Invoke();
+            
             return new CalculationMathExpressionResultDto(result);
         }
         catch (Exception exception)

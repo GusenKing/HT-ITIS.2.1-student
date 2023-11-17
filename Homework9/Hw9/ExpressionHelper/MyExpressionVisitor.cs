@@ -1,62 +1,92 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System.Reflection.Metadata;
 using Hw9.ErrorMessages;
 
-namespace Hw9.ExpressionHelper;
+namespace Hw9.Services.MathCalculator;
 
-[ExcludeFromCodeCoverage]
 public class MyExpressionVisitor : ExpressionVisitor
 {
-    public static Task<Expression> VisitExpression(Expression expression) =>
-        Task.Run(() => new MyExpressionVisitor().Visit(expression));
-
-    protected override Expression VisitUnary(UnaryExpression node)
+    public static Task<Expression> VisitExpression(Expression expression)
     {
-        var value = CompileUnaryAsync(node).Result;
-        return GetExpressionByMathOperationType(node.NodeType, new[] { value });
+        return Task.Run(() => new MyExpressionVisitor().Visit(expression));
     }
 
     protected override Expression VisitBinary(BinaryExpression node)
     {
-        var values = CompileBinaryAsync(node.Left, node.Right).Result;
-        return GetExpressionByMathOperationType(node.NodeType, values);
-    }
-
-    private static async Task<double> CompileUnaryAsync(Expression expression)
-    {
-        await Task.Delay(1000);
-
-        var expressionCompiled = Task.Run(() => Expression.Lambda<Func<double>>(expression).Compile().Invoke());
-
-        return await expressionCompiled;
-    }
-
-    private static async Task<double[]> CompileBinaryAsync(Expression left, Expression right)
-    {
-        await Task.Delay(1000);
-
-        var first = Task.Run(() => Expression.Lambda<Func<double>>(left).Compile().Invoke());
-        var second = Task.Run(() => Expression.Lambda<Func<double>>(right).Compile().Invoke());
-
-        return await Task.WhenAll(first, second);
-    }
-
-    private static Expression GetExpressionByMathOperationType(ExpressionType expressionType, double[] expressionValues)
-    {
-        return expressionType switch
+        try
         {
-            ExpressionType.Negate => 
-                Expression.Negate(Expression.Constant(expressionValues[0])),
-            ExpressionType.Add =>
-                Expression.Add(Expression.Constant(expressionValues[0]), Expression.Constant(expressionValues[1])),
-            ExpressionType.Subtract =>
-                Expression.Subtract(Expression.Constant(expressionValues[0]), Expression.Constant(expressionValues[1])),
-            ExpressionType.Multiply =>
-                Expression.Multiply(Expression.Constant(expressionValues[0]), Expression.Constant(expressionValues[1])),
-            _ => expressionValues[1] == 0
-                ? throw new ArgumentException(MathErrorMessager.DivisionByZero)
-                : Expression.Divide(Expression.Constant(expressionValues[0]), Expression.Constant(expressionValues[1]))
+            return VisitBinaryAsync(node).Result;
+        }
+        catch (AggregateException ex)
+        {
+            throw ex.InnerException;
+        }
+    }
+
+    protected override Expression VisitUnary(UnaryExpression node)
+    {
+        try
+        {
+            return VisitUnaryAsync(node).Result;
+        }
+        catch (AggregateException ex)
+        {
+            throw ex.InnerException;
+        }
+    }
+
+    private async Task<Expression> VisitUnaryAsync(UnaryExpression node)
+    {
+        await Task.Delay(1000);
+        var operand = node.Operand;
+        if (operand is BinaryExpression binaryNode)
+            return await VisitBinaryAsync(binaryNode);
+        
+        if (operand is UnaryExpression unaryNode)
+            return await VisitUnaryAsync(unaryNode);
+        
+        return node;
+    }
+    
+    private async Task<Expression> VisitBinaryAsync(BinaryExpression node)
+    {
+        var firstTask = new Lazy<Task<Expression>>(async () =>
+        {
+            await Task.Delay(1000);
+            if (node.Left is BinaryExpression binaryLeft)
+                return await VisitBinaryAsync(binaryLeft);
+            
+            if (node.Left is UnaryExpression unaryLeft)
+                return await VisitUnaryAsync(unaryLeft);
+            
+            return node.Left;
+        });
+        var secondTask = new Lazy<Task<Expression>>(async () =>
+        {
+            await Task.Delay(1000);
+            if (node.Right is BinaryExpression binaryRight)
+                return await VisitBinaryAsync(binaryRight);
+
+            if (node.Right is UnaryExpression unaryRight)
+                return await VisitUnaryAsync(unaryRight);
+            
+            return node.Right;
+        });
+
+        var result = await Task.WhenAll(firstTask.Value, secondTask.Value);
+
+        if (node.NodeType == ExpressionType.Divide)
+        {
+            if (Expression.Lambda<Func<double>>(result[1]).Compile().Invoke() == 0)
+                throw new Exception(MathErrorMessager.DivisionByZero);
+        }
+
+        return node.NodeType switch
+        {
+            ExpressionType.Add => Expression.Add(result[0], result[1]),
+            ExpressionType.Subtract => Expression.Subtract(result[0], result[1]),
+            ExpressionType.Multiply => Expression.Multiply(result[0], result[1]),
+            ExpressionType.Divide => Expression.Divide(result[0], result[1]),
+            _ => throw new InvalidOperationException("Operation not supported")
         };
     }
 }
