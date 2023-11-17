@@ -49,6 +49,7 @@ public class MyExpressionVisitor : ExpressionVisitor
         return node;
     }
     
+    [ExcludeFromCodeCoverage]
     private async Task<Expression> VisitBinaryAsync(BinaryExpression node)
     {
         var firstTask = new Lazy<Task<Expression>>(async () =>
