@@ -41,6 +41,7 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
     [InlineData("8 + (34 - + 2)", $"{MathErrorMessager.TwoOperationInRow} - and +")]
     [InlineData("4 - 10 * (/10 + 2)", $"{MathErrorMessager.InvalidOperatorAfterParenthesis} (/")]
     [InlineData("10 - 2 * (10 - 1 /)", $"{MathErrorMessager.OperationBeforeParenthesis} /)")]
+    [InlineData(")10 + 6) * 3", MathErrorMessager.IncorrectBracketsNumber)]
     [InlineData("* 10 + 2", MathErrorMessager.StartingWithOperation)]
     [InlineData("10 + 2 -", MathErrorMessager.EndingWithOperation)]
     [InlineData("((10 + 2)", MathErrorMessager.IncorrectBracketsNumber)]
