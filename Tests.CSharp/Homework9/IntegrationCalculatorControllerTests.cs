@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices;
 using Hw9.Dto;
 using Hw9.ErrorMessages;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -23,6 +24,8 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
     [InlineData("3 - 4 / 2", "1")]
     [InlineData("8 * (2 + 2) - 3 * 4", "20")]
     [InlineData("10 - 3 * (-4)", "22")]
+    [InlineData("(-(3 * 4)) * (5 + 5)", "-120")]
+    [InlineData("(-(-(5 + 5))) * 10", "100")]
     public async Task Calculate_CalculateExpression_Success(string expression, string result)
     {
         var response = await CalculateAsync(expression);

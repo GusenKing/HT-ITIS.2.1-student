@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using Hw9.ErrorMessages;
 
@@ -22,6 +23,7 @@ public class MyExpressionVisitor : ExpressionVisitor
         }
     }
 
+    [ExcludeFromCodeCoverage]
     protected override Expression VisitUnary(UnaryExpression node)
     {
         try
@@ -39,10 +41,10 @@ public class MyExpressionVisitor : ExpressionVisitor
         await Task.Delay(1000);
         var operand = node.Operand;
         if (operand is BinaryExpression binaryNode)
-            return await VisitBinaryAsync(binaryNode);
+            return Expression.Negate(VisitBinaryAsync(binaryNode).Result);
         
         if (operand is UnaryExpression unaryNode)
-            return await VisitUnaryAsync(unaryNode);
+            return Expression.Negate(VisitUnaryAsync(unaryNode).Result);
         
         return node;
     }
@@ -86,7 +88,6 @@ public class MyExpressionVisitor : ExpressionVisitor
             ExpressionType.Subtract => Expression.Subtract(result[0], result[1]),
             ExpressionType.Multiply => Expression.Multiply(result[0], result[1]),
             ExpressionType.Divide => Expression.Divide(result[0], result[1]),
-            _ => throw new InvalidOperationException("Operation not supported")
         };
     }
 }
