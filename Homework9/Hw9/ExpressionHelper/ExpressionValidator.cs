@@ -49,10 +49,13 @@ public class ExpressionValidator
             switch (expression[i])
             {
                 case "(":
-                    if (i + 1 < expression.Length && IsOperation(expression[i + 1]))
-                        if(!(expression[i + 1] == "-" && i + 2 < expression.Length && double.TryParse(expression[i + 2], out _)))
-                            throw new ArgumentException(
-                                MathErrorMessager.InvalidOperatorAfterParenthesisMessage(expression[i + 1]));
+                    if (i + 1 < expression.Length && IsOperation(expression[i + 1]) &&
+                        !(expression[i + 1] == "-" && i + 2 < expression.Length &&
+                          double.TryParse(expression[i + 2], out _)))
+                    {
+                        throw new ArgumentException(
+                            MathErrorMessager.InvalidOperatorAfterParenthesisMessage(expression[i + 1]));
+                    }
                     
                     parenthesisStack.Push(expression[i]);
                     break;
@@ -63,6 +66,8 @@ public class ExpressionValidator
 
                     if (parenthesisStack.Count == 0 || parenthesisStack.Pop() != "(")
                         throw new ArgumentException(MathErrorMessager.IncorrectBracketsNumber);
+                    break;
+                default:
                     break;
             }
         }
@@ -92,7 +97,7 @@ public class ExpressionValidator
 
         foreach (var token in expressionNumbersOnly)
         {
-            if (!double.TryParse(token, out var _))
+            if (!IsNumber(token))
                 throw new ArgumentException(MathErrorMessager.NotNumberMessage(token));
         }
     }
