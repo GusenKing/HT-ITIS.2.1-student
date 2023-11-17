@@ -51,7 +51,7 @@ public class ExpressionValidator
                 case "(":
                     if (i + 1 < expression.Length && IsOperation(expression[i + 1]) &&
                         !(expression[i + 1] == "-" && i + 2 < expression.Length &&
-                          double.TryParse(expression[i + 2], out _)))
+                          (double.TryParse(expression[i + 2], out _) || expression[i + 2] == "(")))
                     {
                         throw new ArgumentException(
                             MathErrorMessager.InvalidOperatorAfterParenthesisMessage(expression[i + 1]));
