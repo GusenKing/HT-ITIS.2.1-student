@@ -20,11 +20,11 @@ public class MathCachedCalculatorService : IMathCalculatorService
 	{
 		var dbSet = _dbContext.SolvingExpressions;
 
-		if (await dbSet.AnyAsync(expr => expr.Expression.Equals(expression, StringComparison.InvariantCulture)))
+		if (await dbSet.AnyAsync(expr => expr.Expression.Equals(expression)))
 		{
 			var fromCache = await dbSet
 				.FirstAsync(expr =>
-					expr.Expression.Equals(expression, StringComparison.InvariantCulture));
+					expr.Expression.Equals(expression));
 
 			await Task.Delay(1000);
 			return new CalculationMathExpressionResultDto(fromCache.Result);

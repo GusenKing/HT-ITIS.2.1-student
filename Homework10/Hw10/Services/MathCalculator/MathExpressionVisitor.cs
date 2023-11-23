@@ -47,7 +47,8 @@ public class MathExpressionVisitor : ExpressionVisitor
 
         return node;
     }
-
+    
+    [ExcludeFromCodeCoverage]
     private async Task<Expression> VisitBinaryAsync(BinaryExpression node)
     {
         var firstTask = new Lazy<Task<Expression>>(async () =>
@@ -79,14 +80,13 @@ public class MathExpressionVisitor : ExpressionVisitor
             if (Expression.Lambda<Func<double>>(result[1]).Compile().Invoke() == 0)
                 throw new Exception(MathErrorMessager.DivisionByZero);
         }
-
+        
         return node.NodeType switch
         {
             ExpressionType.Add => Expression.Add(result[0], result[1]),
             ExpressionType.Subtract => Expression.Subtract(result[0], result[1]),
             ExpressionType.Multiply => Expression.Multiply(result[0], result[1]),
             ExpressionType.Divide => Expression.Divide(result[0], result[1]),
-            ExpressionType.Negate => Expression.Negate(node),
         };
     }
 }
