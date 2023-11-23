@@ -41,10 +41,10 @@ public class MathExpressionVisitor : ExpressionVisitor
         await Task.Delay(1000);
         var operand = node.Operand;
         if (operand is BinaryExpression binaryNode)
-            return Expression.Negate(VisitBinaryAsync(binaryNode).Result);
+            return Expression.Negate(await VisitBinaryAsync(binaryNode));
 
         if (operand is UnaryExpression unaryNode)
-            return Expression.Negate(VisitUnaryAsync(unaryNode).Result);
+            return Expression.Negate(await VisitUnaryAsync(unaryNode));
 
         return node;
     }
