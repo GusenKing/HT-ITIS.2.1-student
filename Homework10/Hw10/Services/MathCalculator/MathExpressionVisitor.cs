@@ -23,7 +23,6 @@ public class MathExpressionVisitor : ExpressionVisitor
         }
     }
 
-    [ExcludeFromCodeCoverage]
     protected override Expression VisitUnary(UnaryExpression node)
     {
         try
@@ -49,7 +48,6 @@ public class MathExpressionVisitor : ExpressionVisitor
         return node;
     }
 
-    [ExcludeFromCodeCoverage]
     private async Task<Expression> VisitBinaryAsync(BinaryExpression node)
     {
         var firstTask = new Lazy<Task<Expression>>(async () =>
