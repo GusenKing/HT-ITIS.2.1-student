@@ -25,14 +25,7 @@ public class MathExpressionVisitor : ExpressionVisitor
 
     protected override Expression VisitUnary(UnaryExpression node)
     {
-        try
-        {
-            return VisitUnaryAsync(node).Result;
-        }
-        catch (AggregateException ex)
-        {
-            throw ex.InnerException;
-        }
+        return VisitUnaryAsync(node).Result;
     }
 
     private async Task<Expression> VisitUnaryAsync(UnaryExpression node)
