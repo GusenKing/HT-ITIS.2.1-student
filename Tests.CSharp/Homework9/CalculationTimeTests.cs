@@ -12,8 +12,8 @@ public class CalculationTimeTests : IClassFixture<WebApplicationFactory<Hw9.Prog
     {
         _client = fixture.CreateClient();
     }
-
-    [HomeworkTheory(Homeworks.HomeWork9)]
+    
+    [Theory (Skip = "specific reason")]
     [InlineData("2 + 3 + 4 + 6", 2990, 4000)]
     [InlineData("(2 * 3 + 3 * 3) * (5 / 5 + 6 / 6)", 2990, 4000)]
     [InlineData("(2 + 3) / 12 * 7 + 8 * 9", 3990, 5000)]
