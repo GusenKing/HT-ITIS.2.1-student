@@ -16,7 +16,7 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
     {
         _client = fixture.CreateClient();
     }
-
+    
     [HomeworkTheory(Homeworks.HomeWork9)]
     [InlineData("10", "10")]
     [InlineData("2 + 3", "5")]

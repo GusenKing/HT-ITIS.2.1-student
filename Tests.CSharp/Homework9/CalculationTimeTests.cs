@@ -12,7 +12,7 @@ public class CalculationTimeTests : IClassFixture<WebApplicationFactory<Hw9.Prog
     {
         _client = fixture.CreateClient();
     }
-
+    
     [HomeworkTheory(Homeworks.HomeWork9)]
     [InlineData("2 + 3 + 4 + 6", 2990, 4000)]
     [InlineData("3 * (-4)", 1990, 3000)]
