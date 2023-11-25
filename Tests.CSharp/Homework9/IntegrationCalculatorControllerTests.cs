@@ -17,7 +17,7 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
         _client = fixture.CreateClient();
     }
     
-    [Theory (Skip = "specific reason")]
+    [HomeworkTheory(Homeworks.HomeWork9)]
     [InlineData("10", "10")]
     [InlineData("2 + 3", "5")]
     [InlineData("(10 - 3) * 2", "14")]
@@ -33,7 +33,7 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
         Assert.Equal(result, response.Result.ToString(CultureInfo.InvariantCulture));
     }
 
-    [Theory (Skip = "specific reason")]
+    [HomeworkTheory(Homeworks.HomeWork9)]
     [InlineData(null, MathErrorMessager.EmptyString)]
     [InlineData("", MathErrorMessager.EmptyString)]
     [InlineData("10 + i", $"{MathErrorMessager.UnknownCharacter} i")]
