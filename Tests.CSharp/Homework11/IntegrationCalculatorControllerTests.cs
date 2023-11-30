@@ -18,6 +18,7 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
 
     [HomeworkTheory(Homeworks.HomeWork11)]
     [InlineData("10", "10")]
+    [InlineData("(-10)", "-10")]
     [InlineData("2 + 3", "5")]
     [InlineData("(10 - 3) * 2", "14")]
     [InlineData("3 - 4 / 2", "1")]
@@ -45,6 +46,7 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
     [InlineData("10 + 2 -", MathErrorMessager.EndingWithOperation)]
     [InlineData("((10 + 2)", MathErrorMessager.IncorrectBracketsNumber)]
     [InlineData("(10 - 2))", MathErrorMessager.IncorrectBracketsNumber)]
+    [InlineData(")10 + 6) * 3", MathErrorMessager.IncorrectBracketsNumber)]
     [InlineData("10 / 0", MathErrorMessager.DivisionByZero)]
     [InlineData("10 / (1 - 1)", MathErrorMessager.DivisionByZero)]
     public async Task Calculate_CalculateExpression_Error(string expression, string result)
