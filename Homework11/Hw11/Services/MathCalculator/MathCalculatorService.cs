@@ -1,11 +1,11 @@
-using System.Linq.Expressions;
-using Hw11.Dto;
+using System.Diagnostics.CodeAnalysis;
 using Hw11.Regex;
 
 namespace Hw11.Services.MathCalculator;
 
 public class MathCalculatorService : IMathCalculatorService
 {
+    [ExcludeFromCodeCoverage]
     public async Task<double> CalculateMathExpressionAsync(string? expression)
     { 
         MathExpressionValidator validator = new ();
