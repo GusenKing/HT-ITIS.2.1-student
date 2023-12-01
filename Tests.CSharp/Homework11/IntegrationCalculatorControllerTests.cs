@@ -48,6 +48,7 @@ public class IntegrationCalculatorControllerTests : IClassFixture<WebApplication
     [InlineData(")10 + 6) * 3", MathErrorMessager.IncorrectBracketsNumber)]
     [InlineData("10 / 0", MathErrorMessager.DivisionByZero)]
     [InlineData("10 / (1 - 1)", MathErrorMessager.DivisionByZero)]
+    [InlineData("((10 + 6) - 9(", MathErrorMessager.IncorrectBracketsNumber)]
     public async Task Calculate_CalculateExpression_Error(string expression, string result)
     {
         var response = await CalculateAsync(expression);
