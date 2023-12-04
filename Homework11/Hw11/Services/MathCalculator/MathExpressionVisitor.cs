@@ -4,31 +4,35 @@ using Hw11.ErrorMessages;
 
 namespace Hw11.Services.MathCalculator;
 
-public class MathExpressionVisitor
+public static class MathExpressionVisitor
 {
-    public Expression VisitConstant(ConstantExpression node)
+    public static Task<Expression> VisitExpression(Expression expression)
     {
-        return node;
+        return Visit((dynamic)expression);
+    }
+
+    private static async Task<Expression> Visit(ConstantExpression expression)
+    {
+        return expression;
     }
     
+    private static async Task<Expression> Visit(UnaryExpression expression)
+    {
+        return expression;
+    }    
+    
     [ExcludeFromCodeCoverage]
-    public async Task<Expression> VisitBinaryAsync(BinaryExpression node)
+    private static async Task<Expression> Visit(BinaryExpression node)
     {
         var firstTask = new Lazy<Task<Expression>>(async () =>
         {
             await Task.Delay(1000);
-            if (node.Left is BinaryExpression binaryLeft)
-                return await VisitBinaryAsync(binaryLeft);
-            
-            return node.Left;
+            return await Visit((dynamic)node.Left);
         });
         var secondTask = new Lazy<Task<Expression>>(async () =>
         {
             await Task.Delay(1000);
-            if (node.Right is BinaryExpression binaryRight)
-                return await VisitBinaryAsync(binaryRight);
-            
-            return node.Right;
+            return await Visit((dynamic)node.Right);
         });
 
         var result = await Task.WhenAll(firstTask.Value, secondTask.Value);

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using Hw11.Regex;
 
 namespace Hw11.Services.MathCalculator;
@@ -17,6 +18,7 @@ public class MathCalculatorService : IMathCalculatorService
 
         var expressionConverted = MathConverterToExpressionTree.ConvertToExpressionTree(expressionInPolishNotation);
 
-        return await Dispatcher.Visit((dynamic)expressionConverted);
+        return Expression.Lambda<Func<double>>(
+            await MathExpressionVisitor.VisitExpression(expressionConverted)).Compile().Invoke();
     }
 }
