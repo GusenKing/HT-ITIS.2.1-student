@@ -26,22 +26,22 @@ public class ExceptionHandler : IExceptionHandler
 	{
 		_logger.LogError($"{UnknownError}: {exception.Message}");
 	}
-
+	[ExcludeFromCodeCoverage]
 	private void Handle(InvalidNumberException exception)
 	{
 		_logger.LogError($"{InvalidNumber}: {exception.Message}");
 	}
-
+	[ExcludeFromCodeCoverage]
 	private void Handle(InvalidSyntaxException exception)
 	{
 		_logger.LogError($"{InvalidSyntax}: {exception.Message}");
 	}
-
+	[ExcludeFromCodeCoverage]
 	private void Handle(InvalidSymbolException exception)
 	{
 		_logger.LogError($"{InvalidSymbol}: {exception.Message}");
 	}
-	
+	[ExcludeFromCodeCoverage]
 	private void Handle(DivideByZeroException exception)
 	{
 		_logger.LogError(exception.Message);
